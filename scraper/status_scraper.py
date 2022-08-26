@@ -3,6 +3,16 @@ import tweepy
 import pandas as pd
 
 class StatusScraper(Scraper):
+    """Class used for scraping information about a particular word or hashtag. It inherits the Scraper class along with its attributes and methods. If the query is not a valid Twitter account, it will return an error.
+
+    Parameters:
+        * query(str): the word or hashtag that will be scraped. Examples: "Tesla" or "#iPhone14".
+        * count(int): the number of tweets, retweets and replies that will be retrieved.
+
+    Methods:
+        * search_tweets(): returns a dataframe with tweets, retweets and replies about the given query.
+    """
+
     scraped_queries = []
 
     def __init__(self, query, count):
@@ -11,7 +21,7 @@ class StatusScraper(Scraper):
         StatusScraper.scraped_queries.append(query)
 
     def search_tweets(self):
-        """Returns a dataframe with tweets about the given query."""
+        """Returns a dataframe with tweets, retweets and replies about the given query."""
 
         tweets = tweepy.Cursor(super().get_api().search_tweets, q=self.query).items(self.count)
         attributes = []

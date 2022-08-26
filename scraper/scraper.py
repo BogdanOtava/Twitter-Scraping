@@ -1,14 +1,18 @@
 from config import CONFIG, ROOT
 from configparser import ConfigParser
+from abc import ABC
 import tweepy
+import os
 
-class Scraper:
+class Scraper(ABC):
+    """Abstract class used as a blueprint for other classes."""
+
     def __init__(self, query:str, count:int):
         self.query = query
         self.count = count
 
     def get_api(self):
-        """Enables direct access to Twitter."""
+        """Enables direct access to Twitter using Twitter API. Takes the keys used to log in to the API from the config file in the main directory. Method is inherited by other classes and used by it's methods, and not straight by the user."""
 
         config = ConfigParser()
         config.read(CONFIG)
@@ -24,6 +28,11 @@ class Scraper:
         return api
 
     def export_to_csv(self, dataframe):
-        """Exports given dataframe given as parameter to a CSV file."""
+        """Exports the dataframe given as parameter to a CSV file in 'data' directory which is located in the main directory. If 'data' doesn't exist it will create it first and then save the CSV file in it."""
+
+        path = f"{ROOT}/data"
+
+        if os.path.isdir(path) != True:
+            os.mkdir(path)
 
         dataframe.to_csv(f"{ROOT}/data/{self.query}_data.csv", index=False, encoding="UTF-8")

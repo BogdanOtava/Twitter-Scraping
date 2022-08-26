@@ -1,5 +1,4 @@
 from config import ROOT
-from shutil import ReadError
 import pandas as pd
 
 pd.set_option("display.max_colwidth", 1)
@@ -10,7 +9,7 @@ def parse_data(filename):
 
     try:
         data = pd.read_csv(f"{ROOT}/data/{filename}")
-    except ReadError as error:
+    except Exception as error:
         print(error)
     else:
         data.index += 1
@@ -36,24 +35,39 @@ def get_tweets_only(filename, count:int):
 
     return tweets_only.head(count)
 
-# def get_source_count(dataframe):
-#     """Returns in descending order the source of the tweets and the number."""
+def get_source_count(filename, count:int):
+    """ in descending order the source of the tweets and the number."""
 
-#     source = dataframe["source"].value_counts()
+    data = parse_data(filename=filename)
+    data = data.head(count)
 
-#     return source
+    data = data["source"].value_counts().to_dict()
 
-# def get_likes_count(dataframe):
-#     """Returns in descending order the number of likes for each tweet."""
+    for key, value in data.items():
+        print(f"{key} - {value}")
 
-#     pd.set_option("display.max_colwidth", None)
-#     pd.set_option("display.colheader_justify", "left")
+def get_likes_count(filename, count:int):
+    """Prints in descending order the number of likes for each tweet."""
 
-#     like_sort = dataframe[["likes", "content"]].copy()
-#     like_sort.sort_values("likes", ascending=False, inplace=True, ignore_index=True)
-#     like_sort.index += 1
+    data = parse_data(filename=filename)
+    data = data.head(count)
 
-#     return like_sort
+    like_sort = data[["likes", "tweet"]].copy()
+    like_sort.sort_values("likes", ascending=False, inplace=True, ignore_index=True)
+    like_sort.index += 1
 
-# print(get_likes_count(data))
-# print(get_tweets_only(data, 10))
+    print(like_sort)
+
+def get_word_count(filename, count:int):
+    """Prints the total number of each word used in tweets."""
+
+    data = parse_data(filename=filename)
+    data = data.head(count)
+
+    data["words"] = data["tweet"].str.lower().str.replace("[^\w\s]", "", regex=True)
+    new_data = data["words"].str.split(expand=True).stack().value_counts().reset_index()
+
+    new_data.columns = ["word_count", "apparitions"]
+    new_data.index += 1
+
+    print(new_data)
