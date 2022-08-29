@@ -13,12 +13,10 @@ class StatusScraper(Scraper):
         * search_tweets(): returns a dataframe with tweets, retweets and replies about the given query.
     """
 
-    scraped_queries = []
-
     def __init__(self, query, count):
         super().__init__(query, count)
 
-        StatusScraper.scraped_queries.append(query)
+        super().export_activity()
 
     def search_tweets(self):
         """Returns a dataframe with tweets, retweets and replies about the given query."""

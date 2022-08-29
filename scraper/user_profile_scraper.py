@@ -1,7 +1,7 @@
 from scraper.scraper import Scraper
-import tweepy
 import pandas as pd
 import webbrowser as wb
+import tweepy
 
 class UserProfileScraper(Scraper):
     """Class used for scraping information about a particular Twitter account, such as tweets, replies, account details, etc. It inherits the Scraper class along with its attributes and methods. If the query is not a valid Twitter account, it will return an error.
@@ -16,12 +16,10 @@ class UserProfileScraper(Scraper):
         * search_user_activity(): returns a dataframe with tweets, retweets and replies of the account. Use with the method inherited from Scraper, export_to_csv(), to export and save the dataframe.
     """
 
-    scraped_profiles = []
-
     def __init__(self, query, count):
         super().__init__(query, count)
 
-        UserProfileScraper.scraped_profiles.append(query)
+        super().export_activity()
 
     def print_user_info(self):
         """Prints information about the Twitter account."""

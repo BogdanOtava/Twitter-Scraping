@@ -116,7 +116,14 @@ def get_word_count(filename, count:int, tweets_only=True):
 
     print(new_data)
 
-def get_sentiment(query:str):
+def get_sentiment(filename, count:int, tweets_only=True):
+
+    if tweets_only == True:
+        data = get_tweets_only(filename=filename, count=count)
+    else:
+        data = parse_data(filename=filename)
+
+    tweets_list = data["tweet"].tolist()
 
     config = ConfigParser()
     config.read(CONFIG)
@@ -124,17 +131,25 @@ def get_sentiment(query:str):
     app_key = config["rapidapi"]["app_key"]
 
     url = "https://text-sentiment.p.rapidapi.com/analyze"
-    payload = f"text={query}"
     headers = {
         "content-type": "application/x-www-form-urlencoded",
         "X-RapidAPI-Key": f"{app_key}",
         "X-RapidAPI-Host": "text-sentiment.p.rapidapi.com"
     }
 
-    response = requests.request("POST", url=url, data=payload, headers=headers)
-    response = response.json()
+    tweets = []
 
-    data = pd.DataFrame.from_dict([response])
-    data["mean"] = data.iloc[:, 2:4].mean(axis=1)
+    for tweet in tweets_list:
+        payload = f"text={tweet}"
 
-    print(data.head())
+        response = requests.request("POST", url=url, data=payload.encode("UTF-8"), headers=headers)
+        response = response.json()
+        tweets.append(response)
+
+    tweets_list = [[tweet["text"], tweet["pos_percent"], tweet["mid_percent"], tweet["neg_percent"]] for tweet in tweets]
+
+    tweets_data = pd.DataFrame(tweets_list, columns=["tweet", "positive_sentiment", "average_sentiment", "negative_sentiment"])
+    tweets_data.index += 1
+    
+    pd.set_option("display.max_colwidth", 50)
+    print(tweets_data.head(count))

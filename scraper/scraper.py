@@ -1,7 +1,9 @@
 from config import CONFIG, ROOT
 from configparser import ConfigParser
+from datetime import datetime
 from abc import ABC
 import tweepy
+import json
 import os
 
 class Scraper(ABC):
@@ -27,12 +29,21 @@ class Scraper(ABC):
 
         return api
 
+    def export_activity(self):
+        """Will be automatically called every time an instance is created and save the information in a JSON file.
+        """
+
+        path = f"{ROOT}/activity" 
+
+        if not os.path.isdir(path):
+            os.mkdir(path)
+
     def export_to_csv(self, dataframe):
         """Exports the dataframe given as parameter to a CSV file in 'data' directory which is located in the main directory. If 'data' doesn't exist it will create it first and then save the CSV file in it."""
 
         path = f"{ROOT}/data"
 
-        if os.path.isdir(path) != True:
+        if not os.path.isdir(path):
             os.mkdir(path)
 
         dataframe.to_csv(f"{ROOT}/data/{self.query}_data.csv", index=False, encoding="UTF-8")
