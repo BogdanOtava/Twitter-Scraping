@@ -19,10 +19,12 @@ class UserProfileScraper(Scraper):
     def __init__(self, query, count):
         super().__init__(query, count)
 
-        super().export_activity()
+        if query.lower() == super().get_api().get_user(screen_name=self.query).screen_name.lower():
+            super().export_activity()
 
-    def print_user_info(self):
-        """Prints information about the Twitter account."""
+    def print_user_info(self) -> str:
+        """Prints information about the Twitter account.
+        """
 
         scraped_info = super().get_api().get_user(screen_name=self.query)
 
@@ -41,13 +43,15 @@ class UserProfileScraper(Scraper):
             print(f"{keys} - {values}")
 
     def go_to_profile(self):
-        """Goes to the instantiated Twitter account."""
+        """Goes to the instantiated Twitter account.
+        """
 
         chrome_path = "C:/Program Files (x86)/Google/Chrome/Application/chrome.exe %s"
         wb.get(chrome_path).open_new(f"twitter.com/{self.query}")
 
-    def search_user_activity(self):
-        """Returns a dataframe with tweets from the instantiated Twitter account. Use together with export_to_csv() to export and save the dataframe."""
+    def search_user_activity(self) -> pd.DataFrame:
+        """Returns a dataframe with tweets from the instantiated Twitter account. Use together with export_to_csv() to export and save the dataframe.
+        """
 
         tweets = tweepy.Cursor(super().get_api().user_timeline, screen_name=self.query).items(self.count)
         attributes = []

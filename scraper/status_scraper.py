@@ -16,10 +16,9 @@ class StatusScraper(Scraper):
     def __init__(self, query, count):
         super().__init__(query, count)
 
-        super().export_activity()
-
-    def search_tweets(self):
-        """Returns a dataframe with tweets, retweets and replies about the given query."""
+    def search_tweets(self) -> pd.DataFrame:
+        """Returns a dataframe with tweets, retweets and replies about the given query.
+        """
 
         tweets = tweepy.Cursor(super().get_api().search_tweets, q=self.query).items(self.count)
         attributes = []
