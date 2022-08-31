@@ -3,6 +3,7 @@ from configparser import ConfigParser
 from pandas import DataFrame
 from datetime import datetime
 from abc import ABC
+import sys
 import tweepy
 import json
 import os
@@ -15,8 +16,20 @@ class Scraper(ABC):
         self.query = query
         self.count = count
 
-        assert len(query) > 0, f"length of query must be greater than 0, got {len(query)}."
-        assert count > 0, f"count expected a positive number, got {count}."
+        try:
+            self.query.lower() == self.get_api().get_user(screen_name=self.query).screen_name.lower()
+        except tweepy.Unauthorized:
+            print("Could not authenticate to Twitter API. Make sure the keys are correct.")
+            sys.exit()
+        except tweepy.NotFound:
+            print(f"Account {self.query} could not be found. Make sure the name is correctly written.")
+            sys.exit()
+
+        try:
+            assert count > 0
+        except AssertionError:
+            print(f"Count parameter has to be greater than 0, got {count}.")
+            sys.exit()
 
     def get_api(self):
         """Enables direct access to Twitter using Twitter API. Takes the keys used to log in to the API from the config file in the main directory. Method is inherited by other classes and used by it's methods, and not straight by the user.
@@ -48,8 +61,8 @@ class Scraper(ABC):
 
         return activity_log
 
-    def export_activity(self):
-        """Will be automatically called every time an instance is created and save the information in a JSON file. It will create the necessary directory and files if they don't exist already.
+    def export_user_activity(self):
+        """Will be automatically called every time an instance of UserProfileScraper class is created and save the information in a JSON file. It will create the necessary directory and files if they don't exist already.
         """
 
         path = f"{ROOT}/activity" 

@@ -19,8 +19,7 @@ class UserProfileScraper(Scraper):
     def __init__(self, query, count):
         super().__init__(query, count)
 
-        if query.lower() == super().get_api().get_user(screen_name=self.query).screen_name.lower():
-            super().export_activity()
+        super().export_user_activity()
 
     def print_user_info(self) -> str:
         """Prints information about the Twitter account.
