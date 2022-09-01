@@ -2,6 +2,7 @@ from scraper.scraper import Scraper
 import pandas as pd
 import webbrowser as wb
 import tweepy
+import sys
 
 class UserProfileScraper(Scraper):
     """Class used for scraping information about a particular Twitter account, such as tweets, replies, account details, etc. It inherits the Scraper class along with its attributes and methods. If the query is not a valid Twitter account, it will return an error.
@@ -18,6 +19,15 @@ class UserProfileScraper(Scraper):
 
     def __init__(self, query, count):
         super().__init__(query, count)
+
+        try:
+            self.query.lower() == self.get_api().get_user(screen_name=self.query).screen_name.lower()
+        except tweepy.Unauthorized:
+            print("Could not authenticate to Twitter API. Make sure the keys are correct.")
+            sys.exit()
+        except tweepy.NotFound:
+            print(f"Account {self.query} could not be found. Make sure the name is correctly written, without the @.")
+            sys.exit()
 
         super().export_user_activity()
 

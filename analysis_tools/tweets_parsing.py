@@ -2,6 +2,7 @@ from configparser import ConfigParser
 from config import CONFIG, ROOT
 import pandas as pd
 import requests
+import sys
 
 pd.set_option("display.max_colwidth", 1)
 pd.set_option("display.colheader_justify", "center")
@@ -15,15 +16,16 @@ def parse_data(filename):
 
     try:
         data = pd.read_csv(f"{ROOT}/data/{filename}")
-    except Exception as error:
-        print(error)
+    except FileNotFoundError:
+        print("Could not find the file. Make sure file exists in 'data' directory.")
+        sys.exit()
     else:
         data.index += 1
         data[["tweet", "url"]] = data["content"].str.split("https://t.co/", expand=True, regex=False, n=1)
         data.drop(["url", "content"], axis=1, inplace=True)
         data.fillna("-", inplace=True)
 
-    return data
+        return data
 
 def get_tweets_only(filename, count:int):
     """Returns only the tweets made by the user for the given dataframe.

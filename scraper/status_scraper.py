@@ -16,6 +16,8 @@ class StatusScraper(Scraper):
     def __init__(self, query, count):
         super().__init__(query, count)
 
+        super().export_status_activity()
+
     def search_tweets(self) -> pd.DataFrame:
         """Returns a dataframe with tweets, retweets and replies about the given query.
         """
