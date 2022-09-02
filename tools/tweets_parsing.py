@@ -114,7 +114,7 @@ def get_word_count(filename:str, count:int, tweets_only=True, export_as_csv=Fals
         * export_as_csv(bool): by default False; it will save the dataframe as a CSV file if True.
     """
 
-    if tweets_only == True:
+    if tweets_only:
         data = get_tweets_only(filename=filename, count=count)
     else:
         data = parse_data(filename=filename)
@@ -146,7 +146,7 @@ def get_sentiment(filename:str, count:int, tweets_only=True, export_as_csv=False
         * export_as_csv(bool): by default False; it will save the dataframe as a CSV file if True.
     """
 
-    if tweets_only == True:
+    if tweets_only:
         data = get_tweets_only(filename=filename, count=count)
     else:
         data = parse_data(filename=filename)
