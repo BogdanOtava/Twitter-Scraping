@@ -1,18 +1,18 @@
 from scraper.user_profile_scraper import UserProfileScraper
 from scraper.status_scraper import StatusScraper
-import analysis_tools.tweets_parsing as tweets
+import tools.tweets_parsing as tweets
 
-# twitter = UserProfileScraper("twitter", 25)
-# casey = UserProfileScraper("casey", 10)
+# mkbhd = UserProfileScraper("mkbhd", 1000)
+# mkbhd.print_user_info()
+# mkbhd.go_to_profile()
 
-# iphone = StatusScraper("#iphone14", 250)
-# goty = StatusScraper("#goty", 25)
+# print(mkbhd.search_user_activity())
 
-# iphone_data = iphone.search_tweets()
-# iphone.export_to_csv(iphone_data)
+# mkbhd_tweets = mkbhd.search_user_activity()
+# mkbhd.export_dataframe(mkbhd_tweets)
 
-print(tweets.get_tweets_only("#iphone14_data.csv", 10))
-tweets.get_source_count("#iphone14_data.csv", 10)
-tweets.get_likes_count("#iphone14_data.csv", 10)
-tweets.get_word_count("#iphone14_data.csv", 10)
-tweets.get_sentiment("#iphone14_data.csv", 10)
+# tweets.get_tweets_only("mkbhd_data", 100, export_as_csv=True)
+# tweets.get_source_count("mkbhd_data", 345)
+# tweets.get_likes_count("mkbhd_data", 345)
+# tweets.get_word_count("mkbhd_data", 345, export_as_csv=True)
+# tweets.get_sentiment("mkbhd_data", 10, export_as_csv=True)

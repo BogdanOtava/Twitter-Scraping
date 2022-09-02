@@ -1,4 +1,5 @@
 from scraper.scraper import Scraper
+from config import STATUS_ACTIVITY_PATH
 import tweepy
 import pandas as pd
 
@@ -16,7 +17,7 @@ class StatusScraper(Scraper):
     def __init__(self, query, count):
         super().__init__(query, count)
 
-        super().export_status_activity()
+        super().export_activity(STATUS_ACTIVITY_PATH)
 
     def search_tweets(self) -> pd.DataFrame:
         """Returns a dataframe with tweets, retweets and replies about the given query.

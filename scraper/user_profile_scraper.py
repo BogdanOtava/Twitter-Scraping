@@ -1,4 +1,5 @@
 from scraper.scraper import Scraper
+from config import USER_ACTIVITY_PATH, CHROME_PATH
 import pandas as pd
 import webbrowser as wb
 import tweepy
@@ -23,13 +24,11 @@ class UserProfileScraper(Scraper):
         try:
             self.query.lower() == self.get_api().get_user(screen_name=self.query).screen_name.lower()
         except tweepy.Unauthorized:
-            print("Could not authenticate to Twitter API. Make sure the keys are correct.")
-            sys.exit()
+            sys.exit("Could not authenticate to Twitter API. Make sure the keys are correct.")
         except tweepy.NotFound:
-            print(f"Account {self.query} could not be found. Make sure the name is correctly written, without the @.")
-            sys.exit()
+            sys.exit(f"Account {self.query} could not be found. Make sure the name is correctly written, without the @.")
 
-        super().export_user_activity()
+        super().export_activity(USER_ACTIVITY_PATH)
 
     def print_user_info(self) -> str:
         """Prints information about the Twitter account.
@@ -55,8 +54,10 @@ class UserProfileScraper(Scraper):
         """Goes to the instantiated Twitter account.
         """
 
-        chrome_path = "C:/Program Files (x86)/Google/Chrome/Application/chrome.exe %s"
-        wb.get(chrome_path).open_new(f"twitter.com/{self.query}")
+        try:
+            wb.get(CHROME_PATH).open_new(f"twitter.com/{self.query}")
+        except wb.Error:
+            print("Could not open the browser because the path is incorrect.")
 
     def search_user_activity(self) -> pd.DataFrame:
         """Returns a dataframe with tweets from the instantiated Twitter account. Use together with export_to_csv() to export and save the dataframe.
