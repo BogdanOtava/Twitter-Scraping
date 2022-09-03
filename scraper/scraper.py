@@ -2,6 +2,7 @@ from config import CONFIG, ACTIVITY_PATH, RAW_TWEETS_PATH, DATA_PATH
 from configparser import ConfigParser
 from pandas import DataFrame
 from datetime import datetime
+from logger import logger
 import tweepy
 import json
 import sys
@@ -24,7 +25,8 @@ class Scraper:
         try:
             assert count > 0
         except AssertionError:
-            sys.exit(f"Count parameter has to be greater than 0, got {count}.")
+            logger.error(f"Count parameter has to be greater than 0, got {count}.")
+            sys.exit()
 
     def get_api(self):
         """Enables direct access to Twitter using Twitter API. Takes the keys used to log in to the API from the config file in the main directory. Method is inherited by other classes and used by it's methods, and not straight by the user.
@@ -87,3 +89,4 @@ class Scraper:
             os.mkdir(RAW_TWEETS_PATH)
 
         dataframe.to_csv(f"{RAW_TWEETS_PATH}/{self.query}_data.csv", index=False, encoding="UTF-8")
+        logger.info("Export successful!")

@@ -2,17 +2,26 @@ from scraper.user_profile_scraper import UserProfileScraper
 from scraper.status_scraper import StatusScraper
 import tools.tweets_parsing as tweets
 
-# mkbhd = UserProfileScraper("mkbhd", 1000)
-# mkbhd.print_user_info()
-# mkbhd.go_to_profile()
+# 1. Create object
+# mrbeast = UserProfileScraper("mrbeast", 250)
+# iphone = StatusScraper("#iphone14", 100)
 
-# print(mkbhd.search_user_activity())
+# 2. Object methods
+# mrbeast.print_user_info()
+# mrbeast.go_to_profile()
+# mrbeast.search_user_activity()
+# apple.search_tweets()
 
-# mkbhd_tweets = mkbhd.search_user_activity()
-# mkbhd.export_dataframe(mkbhd_tweets)
+# 3. Save tweets to CSV file
+# mrbeast_data = mrbeast.search_user_activity()
+# iphone_data = iphone.search_tweets()
 
-# tweets.get_tweets_only("mkbhd_data", 100, export_as_csv=True)
-# tweets.get_source_count("mkbhd_data", 345)
-# tweets.get_likes_count("mkbhd_data", 345)
-# tweets.get_word_count("mkbhd_data", 345, export_as_csv=True)
-# tweets.get_sentiment("mkbhd_data", 10, export_as_csv=True)
+# mrbeast.export_dataframe(mrbeast_data)
+# iphone.export_dataframe(iphone_data)
+
+# 4. Analyze data
+# tweets.get_tweets_only("mrbeast_data", 34, export_as_csv=True)
+# tweets.get_source_count("mrbeast_data", 34)
+# tweets.get_likes_count("mrbeast_data", 34)
+# tweets.get_word_count("mrbeast_data", 34, export_as_csv=True)
+tweets.get_sentiment("mrbeast_data", 34, export_as_csv=True)

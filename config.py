@@ -3,6 +3,7 @@ import pathlib
 ROOT = pathlib.Path(__file__).parent
 CONFIG = ROOT.joinpath("keys.ini")
 CHROME_PATH = f"C:/Program Files (x86)/Google/Chrome/Application/chrome.exe %s"
+LOGS_PATH = ROOT.joinpath("logs")
 
 ACTIVITY_PATH = ROOT.joinpath("activity")
 USER_ACTIVITY_PATH = ROOT.joinpath("activity/user_activity.json")

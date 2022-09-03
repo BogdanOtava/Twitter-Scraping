@@ -1,5 +1,6 @@
 from scraper.scraper import Scraper
 from config import STATUS_ACTIVITY_PATH
+from logger import logger
 import tweepy
 import pandas as pd
 
@@ -16,6 +17,7 @@ class StatusScraper(Scraper):
 
     def __init__(self, query, count):
         super().__init__(query, count)
+        logger.info(f"Created object from query '{self.query}'.")
 
         super().export_activity(STATUS_ACTIVITY_PATH)
 
@@ -31,5 +33,7 @@ class StatusScraper(Scraper):
             columns = ["creation_date", "source", "location", "language", "author", "content", "likes", "retweets", "replied_to_user", "replied_to_tweet"]
 
         tweets_data = pd.DataFrame(attributes, columns=columns)
+
+        logger.info(f"Retrieved the last {self.count} tweets for word '{self.query}'.")
 
         return tweets_data

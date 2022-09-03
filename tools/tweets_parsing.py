@@ -1,9 +1,17 @@
 from configparser import ConfigParser
+from logger import logger
 import config as cfg
 import pandas as pd
 import requests
 import sys
 import os
+
+def check_file(path):
+    """It will check if the path parameter doesn't exist and it will create it if the condition is met.
+    """
+
+    if not os.path.isdir(path):
+        os.mkdir(path)
 
 def parse_data(filename:str) -> pd.DataFrame:
     """Takes a CSV file from the 'raw_tweets' directory and parses it so it can be easier to work with. 
@@ -15,7 +23,8 @@ def parse_data(filename:str) -> pd.DataFrame:
     try:
         data = pd.read_csv(f"{cfg.RAW_TWEETS_PATH}/{filename}.csv")
     except FileNotFoundError:
-        sys.exit("Could not find the file. Make sure file exists and it's not given with the extension as a parameter.")
+        logger.critical("Could not find the file. Make sure file exists and it's not given with the extension as a parameter.")
+        sys.exit()
 
     pd.set_option("display.max_colwidth", 1)
     pd.set_option("display.colheader_justify", "center")
@@ -34,9 +43,6 @@ def get_tweets_only(filename:str, count:int, export_as_csv=False) -> pd.DataFram
         * filename(str): the name of the CSV file in 'raw_tweets' directory. Example: 'twitter_data'.
         * count(int): the number of tweets that will be retrieved.
         * export_as_csv(bool): by default False; it will save the dataframe as a CSV file if True.
-
-    Raises:
-        * ValueError: if 'count' is less than 1 or more than the length of the dataframe.
     """
 
     data = parse_data(filename=filename)
@@ -48,16 +54,15 @@ def get_tweets_only(filename:str, count:int, export_as_csv=False) -> pd.DataFram
     tweets_only = tweets_only.drop(["replied_to_user", "replied_to_tweet"], axis=1)
 
     if count < 1 or count > len(tweets_only.index):
-        raise ValueError(f"count parameter cannot be less than 1 or bigger than the length of the dataframe, {len(tweets_only.index)}.")
+        logger.error(f"Count parameter cannot be less than 1 or bigger than the length of the dataframe, {len(tweets_only.index)}.")
+        sys.exit()
 
     tweets_only = tweets_only.head(count)
 
     if export_as_csv:
-        if not os.path.isdir(cfg.TWEETS_ONLY_PATH):
-            os.mkdir(cfg.TWEETS_ONLY_PATH)
-
+        check_file(cfg.TWEETS_ONLY_PATH)
         tweets_only.to_csv(f"{cfg.TWEETS_ONLY_PATH}/{filename}.csv")
-
+        logger.info("Export successful!")
     else:
         return tweets_only
 
@@ -128,11 +133,9 @@ def get_word_count(filename:str, count:int, tweets_only=True, export_as_csv=Fals
     new_data.index += 1
 
     if export_as_csv:
-        if not os.path.isdir(cfg.WORDS_PATH):
-            os.mkdir(cfg.WORDS_PATH)
-
+        check_file(cfg.WORDS_PATH)
         new_data.to_csv(f"{cfg.WORDS_PATH}/{filename}.csv")
-
+        logger.info("Export successful!")
     else:
         print(new_data)
 
@@ -184,10 +187,8 @@ def get_sentiment(filename:str, count:int, tweets_only=True, export_as_csv=False
     tweets_data = tweets_data.head(count)
 
     if export_as_csv:            
-        if not os.path.isdir(cfg.SENTIMENT_PATH):
-            os.mkdir(cfg.SENTIMENT_PATH)
-
+        check_file(cfg.SENTIMENT_PATH)
         tweets_data.to_csv(f"{cfg.SENTIMENT_PATH}/{filename}.csv")
-
+        logger.info("Export successful!")
     else:
         print(tweets_data)

@@ -1,5 +1,6 @@
 from scraper.scraper import Scraper
 from config import USER_ACTIVITY_PATH, CHROME_PATH
+from logger import logger
 import pandas as pd
 import webbrowser as wb
 import tweepy
@@ -20,15 +21,27 @@ class UserProfileScraper(Scraper):
 
     def __init__(self, query, count):
         super().__init__(query, count)
+        self.check_name()
+
+        super().export_activity(USER_ACTIVITY_PATH)
+
+    def check_name(self):
+        """Checks whether the login keys are correct, and if there is an account with the given query. It will stop the execution if one of these conditions are not correct.
+        """
 
         try:
             self.query.lower() == self.get_api().get_user(screen_name=self.query).screen_name.lower()
         except tweepy.Unauthorized:
-            sys.exit("Could not authenticate to Twitter API. Make sure the keys are correct.")
+            logger.error("Could not authenticate to Twitter API. Make sure the keys are correct.")
+            sys.exit()
         except tweepy.NotFound:
-            sys.exit(f"Account {self.query} could not be found. Make sure the name is correctly written, without the @.")
-
-        super().export_activity(USER_ACTIVITY_PATH)
+            logger.error(f"Account {self.query} could not be found. Make sure the name is correctly written.")
+            sys.exit()
+        except tweepy.Forbidden:
+            logger.error(f"Account {self.query} has been suspended.")
+            sys.exit()
+        else:
+            logger.info(f"Created object from query '{self.query}'.")
 
     def print_user_info(self) -> str:
         """Prints information about the Twitter account.
@@ -57,7 +70,7 @@ class UserProfileScraper(Scraper):
         try:
             wb.get(CHROME_PATH).open_new(f"twitter.com/{self.query}")
         except wb.Error:
-            print("Could not open the browser because the path is incorrect.")
+            logger.error("Could not open the browser because the path is incorrect.")
 
     def search_user_activity(self) -> pd.DataFrame:
         """Returns a dataframe with tweets from the instantiated Twitter account. Use together with export_to_csv() to export and save the dataframe.
@@ -71,5 +84,7 @@ class UserProfileScraper(Scraper):
             columns = ["creation_date", "source", "location", "language", "content", "likes", "retweets", "replied_to_user", "replied_to_tweet"]
 
         tweets_data = pd.DataFrame(attributes, columns=columns)
+
+        logger.info(f"Retrieved the last {self.count} tweets for account '{self.query}'.")
 
         return tweets_data
