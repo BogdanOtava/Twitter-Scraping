@@ -20,14 +20,14 @@ if not os.path.isdir(LOGS_PATH):
 logger = logging.getLogger(__name__)
 logger.setLevel(logging.DEBUG)
 
-formatter = logging.Formatter("%(asctime)s [%(levelname)s] %(message)s", datefmt="%d-%m-%Y / %H:%M:%S")
+format = logging.Formatter("%(asctime)s [%(levelname)s] %(message)s", datefmt="%d-%m-%Y / %H:%M:%S")
 
 file_handler = logging.FileHandler(f"{LOGS_PATH}/logs.log")
 file_handler.setLevel(logging.ERROR)
-file_handler.setFormatter(formatter)
+file_handler.setFormatter(format)
 
 stream_handler = logging.StreamHandler()
-stream_handler.setFormatter(formatter)
+stream_handler.setFormatter(format)
 
 logger.addHandler(file_handler)
 logger.addHandler(stream_handler)

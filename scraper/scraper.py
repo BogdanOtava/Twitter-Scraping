@@ -25,7 +25,7 @@ class Scraper:
         try:
             assert count > 0
         except AssertionError:
-            logger.error(f"Count parameter has to be greater than 0, got {count}.")
+            logger.error(f"Count parameter has to be greater than 0, got {count}.", exc_info=True)
             sys.exit()
 
     def get_api(self):

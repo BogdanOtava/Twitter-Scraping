@@ -1,5 +1,5 @@
 from scraper.scraper import Scraper
-from config import USER_ACTIVITY_PATH, CHROME_PATH
+from config import USER_ACTIVITY_PATH, BROWSER_PATH
 from logger import logger
 import pandas as pd
 import webbrowser as wb
@@ -32,13 +32,13 @@ class UserProfileScraper(Scraper):
         try:
             self.query.lower() == self.get_api().get_user(screen_name=self.query).screen_name.lower()
         except tweepy.Unauthorized:
-            logger.error("Could not authenticate to Twitter API. Make sure the keys are correct.")
+            logger.error("Could not authenticate to Twitter API. Make sure the keys are correct.", exc_info=True)
             sys.exit()
         except tweepy.NotFound:
-            logger.error(f"Account {self.query} could not be found. Make sure the name is correctly written.")
+            logger.error(f"Account {self.query} could not be found. Make sure the name is correctly written.", exc_info=True)
             sys.exit()
         except tweepy.Forbidden:
-            logger.error(f"Account {self.query} has been suspended.")
+            logger.error(f"Account {self.query} has been suspended.", exc_info=True)
             sys.exit()
         else:
             logger.info(f"Created object from query '{self.query}'.")
@@ -68,9 +68,9 @@ class UserProfileScraper(Scraper):
         """
 
         try:
-            wb.get(CHROME_PATH).open_new(f"twitter.com/{self.query}")
+            wb.get(BROWSER_PATH).open_new(f"twitter.com/{self.query}")
         except wb.Error:
-            logger.error("Could not open the browser because the path is incorrect.")
+            logger.error("Could not open the browser because the path is incorrect.", exc_info=True)
 
     def search_user_activity(self) -> pd.DataFrame:
         """Returns a dataframe with tweets from the instantiated Twitter account. Use together with export_to_csv() to export and save the dataframe.

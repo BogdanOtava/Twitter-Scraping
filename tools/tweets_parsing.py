@@ -7,7 +7,7 @@ import sys
 import os
 
 def check_file(path):
-    """It will check if the path parameter doesn't exist and it will create it if the condition is met.
+    """It will check if the path parameter doesn't exist and it will create it if the condition is not met.
     """
 
     if not os.path.isdir(path):
@@ -23,7 +23,7 @@ def parse_data(filename:str) -> pd.DataFrame:
     try:
         data = pd.read_csv(f"{cfg.RAW_TWEETS_PATH}/{filename}.csv")
     except FileNotFoundError:
-        logger.critical("Could not find the file. Make sure file exists and it's not given with the extension as a parameter.")
+        logger.error("Could not find the file. Make sure file exists and it's not given with the extension as a parameter.", exc_info=True)
         sys.exit()
 
     pd.set_option("display.max_colwidth", 1)
@@ -37,7 +37,7 @@ def parse_data(filename:str) -> pd.DataFrame:
     return data
 
 def get_tweets_only(filename:str, count:int, export_as_csv=False) -> pd.DataFrame:
-    """Returns or exports only the tweets made by a user.
+    """Returns or exports only the tweets made by the user.
     
     Parameters:
         * filename(str): the name of the CSV file in 'raw_tweets' directory. Example: 'twitter_data'.
@@ -53,9 +53,9 @@ def get_tweets_only(filename:str, count:int, export_as_csv=False) -> pd.DataFram
     tweets_only.index += 1
     tweets_only = tweets_only.drop(["replied_to_user", "replied_to_tweet"], axis=1)
 
-    if count < 1 or count > len(tweets_only.index):
-        logger.error(f"Count parameter cannot be less than 1 or bigger than the length of the dataframe, {len(tweets_only.index)}.")
-        sys.exit()
+    if count > len(tweets_only.index):
+        count = len(tweets_only.index)
+        logger.info(f"Count parameter exceeded total number of tweets and was automatically set to max amount, {len(tweets_only.index)}.")
 
     tweets_only = tweets_only.head(count)
 
@@ -134,7 +134,7 @@ def get_word_count(filename:str, count:int, tweets_only=True, export_as_csv=Fals
 
     if export_as_csv:
         check_file(cfg.WORDS_PATH)
-        new_data.to_csv(f"{cfg.WORDS_PATH}/{filename}.csv")
+        new_data.to_csv(f"{cfg.WORDS_PATH}/{filename}.csv", sep="|")
         logger.info("Export successful!")
     else:
         print(new_data)
