@@ -1,7 +1,3 @@
-### WORK IN PROGRESS
-
-# Twitter-Scraping
-
 ## About The Project
 This project was developed as my portofolio project for attending and graduating a five month long [Python Development course](https://www.itschool.ro/).
 
@@ -46,3 +42,53 @@ The following libraries and packages will be needed:
   `pip install requests`
   
 ## How To Use
+After installing everything previously mentioned, the program should work without any problems. Because the Twitter API scrapes all the activity (tweets, retweets, replies), from now on, the activity will be refered to as __status__. Down below, there's a simple example of how to get the statuses of a user and save them locally. For more information about how the classes or function work, or other methods you can use, refer to their documentation.
+
+### Retrieving data
+First step is to actually get some information from twitter. Let's say we want to scrape the [GitHub Profile](https://twitter.com/github) and save the statuses in a CSV file. Write the code in *main.py*.
+
+#### 1. Create the object. 
+Takes the profile tag as first argument, and the number of statuses you want to retrieve as the second arguemnt.
+
+`github = UserProfileScraper("github", 100)`
+
+#### 2. Get data.
+We'll store the statuses in a variable. These will be retrieved by the *search_user_activity()* method.
+
+`github_data = github.search_user_activity()`
+
+#### 3. Save data.
+To save the scraped statuses locally, we'll use the *export_dataframe* method, passing as argument the previously created variable, *github_data*, where we stored the statuses.
+
+`github.export_dataframe(github_data)`
+
+The statuses are now saved in the current working directory, in *data/raw_tweets*.
+
+### Analyze data
+With the file saved, the next step is to actually get some relevant information about the retrieved statuses.
+
+#### 1. See only the tweets.
+From the 100 statuses previously scraped, we'll save only the tweets in another CSV file, in *data/tweets_only*. Another option is to directly print out the tweets in the console, without passing the *export_as_csv* argument.
+
+`tweets.get_tweets_only("github_data", 100, export_as_csv=True)`
+
+#### 2. See like & source count.
+Prints out the likes count for each tweet in descending order, respectively the devices the tweets were posted from. Pass *tweets_only=False* as argument to one of the functions to see information about all statuses, not only tweets.
+
+`tweets.get_likes_count("github_data", 100)`
+`tweets.get_source_count("github_data", 100)`
+
+#### 3. Get the word count.
+For better visibility, we'll save this as CSV file in *data/word_count*. This CSV file will show each word and the number of times it was used in the last tweets from the 100 statuses. Pass *tweets_only=False* as argument to see the count for all statuses.
+
+`tweets.get_word_count("github_data", 100, export_as_csv=True)`
+
+#### 4. Get sentiment.
+This uses [Text Sentiment Analysis API](https://rapidapi.com/fyhao/api/text-sentiment-analysis-method). You can either print them out or save as csv in *data/sentiment*.
+
+`print(tweets.get_sentiment("github_data", 10))`
+
+## To Be Added & Changed
+ * Incorporate command line arguments with __Argparse Module__.
+ * Improve the logger.
+ * Create own *Sentiment Analysis* tool.
