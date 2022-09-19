@@ -91,4 +91,3 @@ This uses [Text Sentiment Analysis API](https://rapidapi.com/fyhao/api/text-sent
 ## To Be Added & Changed
  * Incorporate command line arguments with __Argparse Module__.
  * Improve the logger.
- * Create own *Sentiment Analysis* tool.
